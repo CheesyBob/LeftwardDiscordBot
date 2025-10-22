@@ -44,7 +44,7 @@ const commands = [
   new SlashCommandBuilder()
     .setName('leftward')
     .setDescription('RESPONCE')
-    .setDMPermission(true)
+    .setContexts(['GUILD_TEXT', 'DM'])
 ].map(cmd => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(token);
