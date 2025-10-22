@@ -1,6 +1,7 @@
 const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
+require('dotenv').config();
 
-const token = 'MTQzMDQxNTc0NDMxODk2NzgxOA.GmuRXd.UQ593Uul-L6vGVnOE44xLtK_xZMcdeKxezQAHM';
+const token = process.env.BOT_TOKEN;
 const clientId = '1430415744318967818';
 
 const client = new Client({
