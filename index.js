@@ -12,7 +12,7 @@ require('dotenv').config();
 const token = process.env.BOT_TOKEN;
 const clientId = '1430415744318967818';
 
-const INACTIVE_DAYS = 3;
+const INACTIVE_DAYS = 1;
 const CHECK_INTERVAL_MS = 60 * 60 * 1000;
 const INACTIVE_MS = INACTIVE_DAYS * 24 * 60 * 60 * 1000;
 
