@@ -236,6 +236,7 @@ async function seedLastSeenFromHistory() {
             const existing = lastSeen.get(guild.id)?.get(msg.author.id) ?? 0;
             if (msg.createdTimestamp > existing) {
               updateLastSeen(guild.id, msg.author.id, msg.createdTimestamp);
+              console.log(`[Seed] Recorded ${msg.author.tag} - last seen ${new Date(msg.createdTimestamp).toLocaleDateString()}`);
             }
           }
 
@@ -245,7 +246,9 @@ async function seedLastSeenFromHistory() {
           const oneMonthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
           if (oldest < oneMonthAgo) keepGoing = false;
         }
-      } catch {}
+      } catch (err) {
+        console.error(`[Seed] Error in ${channel.name}:`, err.message);
+      }
     }
   }
   console.log('[Seed] Done.');
