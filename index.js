@@ -5,6 +5,7 @@ const {
   Routes,
   SlashCommandBuilder,
   ChannelType,
+  InteractionContextType,
 } = require('discord.js');
 require('dotenv').config();
 
@@ -178,7 +179,11 @@ const commands = [
   new SlashCommandBuilder()
     .setName('leftward')
     .setDescription('RESPONCE')
-    .setContexts(['BotDM', 'PrivateChannel', 'Guild']),
+    .setContexts([
+      InteractionContextType.Guild,
+      InteractionContextType.BotDM,
+      InteractionContextType.PrivateChannel,
+    ]),
 ].map((cmd) => cmd.toJSON());
 
 const rest = new REST({ version: '10' }).setToken(token);
@@ -190,7 +195,8 @@ const rest = new REST({ version: '10' }).setToken(token);
     await rest.put(Routes.applicationCommands(clientId), { body: commands });
     console.log('Registered /leftward command.');
   } catch (error) {
-    console.error(error);
+    console.error('Command registration failed:', error);
+    process.exit(1);
   }
 })();
 
