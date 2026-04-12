@@ -13,11 +13,10 @@ const token = process.env.BOT_TOKEN;
 const clientId = '1430415744318967818';
 
 const INACTIVE_DAYS = 1;
-const CHECK_INTERVAL_MS = 60 * 60 * 1000;
+const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000;
 const INACTIVE_MS = INACTIVE_DAYS * 24 * 60 * 60 * 1000;
 
 const lastSeen = new Map();
-const alreadyPinged = new Set();
 
 const client = new Client({
   intents: [
@@ -122,7 +121,6 @@ function getPingChannel(guild) {
 function updateLastSeen(guildId, userId) {
   if (!lastSeen.has(guildId)) lastSeen.set(guildId, new Map());
   lastSeen.get(guildId).set(userId, Date.now());
-  alreadyPinged.delete(`${guildId}-${userId}`);
 }
 
 async function checkInactiveUsers() {
@@ -149,7 +147,6 @@ async function checkInactiveUsers() {
     for (const [memberId, member] of members) {
       if (member.user.bot) continue;
 
-      const key = `${guild.id}-${memberId}`;
       const lastSeenAt = guildLastSeen.get(memberId);
 
       if (!lastSeenAt) {
@@ -162,10 +159,9 @@ async function checkInactiveUsers() {
 
       const inactive = now - lastSeenAt > INACTIVE_MS;
 
-      if (inactive && !alreadyPinged.has(key)) {
+      if (inactive) {
         try {
           await pingChannel.send(`${member} ${randomInactiveMessage()}`);
-          alreadyPinged.add(key);
           console.log(`[${guild.name}] Pinged inactive user: ${member.user.tag}`);
         } catch (err) {
           console.error(`[${guild.name}] Failed to ping ${member.user.tag}:`, err.message);
