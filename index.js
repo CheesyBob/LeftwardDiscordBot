@@ -118,9 +118,9 @@ function getPingChannel(guild) {
   );
 }
 
-function updateLastSeen(guildId, userId) {
+function updateLastSeen(guildId, userId, timestamp = Date.now()) {
   if (!lastSeen.has(guildId)) lastSeen.set(guildId, new Map());
-  lastSeen.get(guildId).set(userId, Date.now());
+  lastSeen.get(guildId).set(userId, timestamp);
 }
 
 async function checkInactiveUsers() {
@@ -235,8 +235,7 @@ async function seedLastSeenFromHistory() {
             if (msg.author.bot) continue;
             const existing = lastSeen.get(guild.id)?.get(msg.author.id) ?? 0;
             if (msg.createdTimestamp > existing) {
-              updateLastSeen(guild.id, msg.author.id);
-              lastSeen.get(guild.id).set(msg.author.id, msg.createdTimestamp);
+              updateLastSeen(guild.id, msg.author.id, msg.createdTimestamp);
             }
           }
 
