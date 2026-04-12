@@ -221,14 +221,30 @@ async function seedLastSeenFromHistory() {
 
     for (const [, channel] of textChannels) {
       try {
-        const fetched = await channel.messages.fetch({ limit: 100 });
-        for (const msg of fetched.values()) {
-          if (msg.author.bot) continue;
-          const existing = lastSeen.get(guild.id)?.get(msg.author.id) ?? 0;
-          if (msg.createdTimestamp > existing) {
-            updateLastSeen(guild.id, msg.author.id);
-            lastSeen.get(guild.id).set(msg.author.id, msg.createdTimestamp);
+        let lastId = null;
+        let keepGoing = true;
+
+        while (keepGoing) {
+          const options = { limit: 100 };
+          if (lastId) options.before = lastId;
+
+          const fetched = await channel.messages.fetch(options);
+          if (fetched.size === 0) break;
+
+          for (const msg of fetched.values()) {
+            if (msg.author.bot) continue;
+            const existing = lastSeen.get(guild.id)?.get(msg.author.id) ?? 0;
+            if (msg.createdTimestamp > existing) {
+              updateLastSeen(guild.id, msg.author.id);
+              lastSeen.get(guild.id).set(msg.author.id, msg.createdTimestamp);
+            }
           }
+
+          lastId = fetched.last()?.id;
+
+          const oldest = fetched.last()?.createdTimestamp ?? Date.now();
+          const twoWeeksAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
+          if (oldest < twoWeeksAgo) keepGoing = false;
         }
       } catch {}
     }
