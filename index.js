@@ -243,8 +243,8 @@ async function seedLastSeenFromHistory() {
           lastId = fetched.last()?.id;
 
           const oldest = fetched.last()?.createdTimestamp ?? Date.now();
-          const twoWeeksAgo = Date.now() - 14 * 24 * 60 * 60 * 1000;
-          if (oldest < twoWeeksAgo) keepGoing = false;
+          const oneMonthAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+          if (oldest < oneMonthAgo) keepGoing = false;
         }
       } catch {}
     }
